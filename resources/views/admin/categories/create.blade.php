@@ -1,0 +1,52 @@
+@extends('admin.layouts.app')
+
+@section('content')
+
+<div class="admin-card-header">
+    <h1 class="admin-page-title" style="margin-bottom: 0;">Create Category</h1>
+</div>
+
+<div class="admin-card">
+
+    <form action="{{ route('categories.store') }}" method="POST">
+
+        @csrf
+
+        <div class="admin-form-group">
+            <label class="admin-form-label" for="name">Category Name</label>
+            <input id="name" type="text" name="name" class="admin-form-input" value="{{ old('name') }}" placeholder="Enter category name">
+            @error('name')
+                <p class="admin-error">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <div class="admin-form-group">
+            <label class="admin-form-label" for="description">Description</label>
+            <textarea id="description" name="description" class="admin-form-input" rows="4" placeholder="Enter category description">{{ old('description') }}</textarea>
+            @error('description')
+                <p class="admin-error">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <div class="admin-form-group">
+            <label class="admin-toggle-label">
+                <input type="checkbox" name="status" {{ old('status', true) ? 'checked' : '' }}>
+                <span>Active</span>
+                <span class="admin-toggle-hint">— visible in storefront</span>
+            </label>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 8px;">
+            <button type="submit" class="admin-btn admin-btn-primary">
+                Create Category
+            </button>
+            <a href="{{ route('categories.index') }}" class="admin-btn admin-btn-secondary">
+                Cancel
+            </a>
+        </div>
+
+    </form>
+
+</div>
+
+@endsection
