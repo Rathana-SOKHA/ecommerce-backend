@@ -4,7 +4,9 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CheckoutController;
+use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ReviewController;
@@ -30,6 +32,10 @@ Route::post('/login', [AuthController::class, 'login']);
 
 // Review public api
 Route::get('/products/{id}/reviews', [ReviewController::class, 'index']);
+
+// Contact Telegram
+Route::middleware('throttle:5,1')
+    ->post('/contact', [ContactController::class, 'send']); // 5 requests per minute for the same client.
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -62,5 +68,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/change-password', [ProfileController::class, 'changePassword']);
 
     // Review
-    Route::post('/reviews', [ReviewController::class, 'store']);
+    Route::post('/products/{product}/reviews', [ReviewController::class, 'store']);
+
+    // Payment
+    Route::post('/payments/upload/{order}', [PaymentController::class,'upload']);
+
 });

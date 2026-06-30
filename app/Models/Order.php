@@ -11,6 +11,7 @@ class Order extends Model
         'user_id',
         'total_amount',
         'status',
+        'payment_method',
     ];
 
     public function user(): BelongsTo
@@ -21,5 +22,10 @@ class Order extends Model
     public function items()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function payment()
+    {
+        return $this->hasOne(Payment::class);
     }
 }
