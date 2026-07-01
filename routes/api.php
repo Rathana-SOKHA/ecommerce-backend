@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\ContactController;
+use App\Http\Controllers\Api\GoogleAuthController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ProductController;
@@ -29,6 +30,10 @@ Route::get('/products-search', [ProductController::class, 'search']);
 // Auth Routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+// google account
+Route::get('/auth/google', [GoogleAuthController::class, 'redirect']);
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback']);
 
 // Review public api
 Route::get('/products/{id}/reviews', [ReviewController::class, 'index']);
@@ -71,6 +76,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/products/{product}/reviews', [ReviewController::class, 'store']);
 
     // Payment
+    Route::get('/payments', [PaymentController::class, 'index']);
+    Route::get('/payments/order/{order}', [PaymentController::class, 'byOrder']);
+    Route::get('/payments/{payment}', [PaymentController::class, 'show']);
     Route::post('/payments/upload/{order}', [PaymentController::class,'upload']);
-
 });
+
+
+

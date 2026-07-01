@@ -9,9 +9,32 @@ use App\Models\OrderItem;
 use App\Services\TelegramService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use OpenApi\Attributes as OA;
 
 class CheckoutController extends Controller
 {
+    #[OA\Post(
+        path: '/api/checkout',
+        summary: 'Place order',
+        description: 'Checkout the cart, create an order, and clear the cart. Supports COD and QR payment.',
+        security: [['sanctum' => []]],
+        tags: ['Checkout'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['payment_method'],
+                properties: [
+                    new OA\Property(property: 'payment_method', type: 'string', enum: ['cod', 'qr'], example: 'cod'),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Order created successfully'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 422, description: 'Validation error or cart empty'),
+            new OA\Response(response: 500, description: 'Server error'),
+        ]
+    )]
     public function checkout(
         Request $request,
         TelegramService $telegram

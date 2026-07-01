@@ -6,12 +6,30 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use OpenApi\Attributes as OA;
 
 class ProfileController extends Controller
 {
-    /**
-     * View Profile
-     */
+    #[OA\Get(
+        path: '/api/profile',
+        summary: 'Get user profile',
+        description: 'Returns the authenticated user\'s profile information (aliased route).',
+        security: [['sanctum' => []]],
+        tags: ['Authentication', 'Profile'],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'User profile',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'status', type: 'boolean', example: true),
+                        new OA\Property(property: 'data', ref: '#/components/schemas/User'),
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+        ]
+    )]
     public function show(Request $request)
     {
         return response()->json([
@@ -20,9 +38,38 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Update Name & Email
-     */
+    #[OA\Put(
+        path: '/api/profile',
+        summary: 'Update profile',
+        description: 'Update the authenticated user\'s name and email.',
+        security: [['sanctum' => []]],
+        tags: ['Authentication', 'Profile'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['name', 'email'],
+                properties: [
+                    new OA\Property(property: 'name', type: 'string', example: 'John Updated'),
+                    new OA\Property(property: 'email', type: 'string', format: 'email', example: 'john.updated@example.com'),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Profile updated successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'status', type: 'boolean', example: true),
+                        new OA\Property(property: 'message', type: 'string', example: 'Profile updated successfully'),
+                        new OA\Property(property: 'data', ref: '#/components/schemas/User'),
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 422, description: 'Validation error'),
+        ]
+    )]
     public function update(Request $request)
     {
         $user = $request->user();
@@ -48,9 +95,38 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Change Password
-     */
+    #[OA\Put(
+        path: '/api/change-password',
+        summary: 'Change password',
+        description: 'Change the authenticated user\'s password.',
+        security: [['sanctum' => []]],
+        tags: ['Authentication', 'Profile'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['current_password', 'password', 'password_confirmation'],
+                properties: [
+                    new OA\Property(property: 'current_password', type: 'string', format: 'password', example: 'oldpassword123'),
+                    new OA\Property(property: 'password', type: 'string', format: 'password', example: 'newpassword123'),
+                    new OA\Property(property: 'password_confirmation', type: 'string', format: 'password', example: 'newpassword123'),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Password changed successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'status', type: 'boolean', example: true),
+                        new OA\Property(property: 'message', type: 'string', example: 'Password changed successfully'),
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 422, description: 'Validation error'),
+        ]
+    )]
     public function changePassword(Request $request)
     {
         $user = $request->user();

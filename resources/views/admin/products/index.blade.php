@@ -101,9 +101,7 @@
 
 </div>
 
-<div style="margin-top: 20px;">
-    {{ $products->links() }}
-</div>
+{{ $products->links('vendor.pagination.admin') }}
 
 <!-- Delete Confirm Modal -->
 <div id="delete-modal" class="admin-modal-overlay" style="display: none;">
